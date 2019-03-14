@@ -1,9 +1,10 @@
 from tkinter import *
 from tkinter import ttk
+import requests
 currencies= {"EUR": 1, "USD": 0.9, "CAD": 0.75}
 
 class Convertidor(ttk.Frame):
-    __oldvalueinQuantity = None
+    __APYCURRENCYLIST_EP =  "https://free.currencyconverterapi.com/api/v6/currencies"
     def __init__(self, parent, **args):
         ttk.Frame.__init__(self, parent, height=229, width=378)
         #Variables de Control
@@ -41,20 +42,26 @@ class Convertidor(ttk.Frame):
         try:
             if self.__strinQuantity.get() != "":
                 v = self.__strinQuantity.get()
+                if "-" in v:
+                    self.__strinQuantity.set(self.__oldvalueinQuantity)
                 v = v.replace(".", "@")
                 v = v.replace(",", ".")
                 float(v)
                 self.__oldvalueinQuantity = self.__strinQuantity.get()
                 self.Convetirdivisas()
+
         except:
             self.__strinQuantity.set(self.__oldvalueinQuantity)
+            
+
 
 class Mainapp(Tk):
     def __init__(self):
         Tk.__init__(self)
         self.geometry("378x229")
         self.title("Cambio de Monedas")
-        self.convertidor = Convertidor(self).place(x=0, y=0)
+        self.convertidor = Convertidor(self)
+        self.convertidor.place(x=0, y=0)
     def start(self):
         self.mainloop()
 
