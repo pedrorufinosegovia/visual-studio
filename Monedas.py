@@ -5,7 +5,7 @@ import json
 
 class Convertidor(ttk.Frame):
     __APYCURRENCYLIST_EP =  "https://free.currencyconverterapi.com/api/v6/currencies?apiKey=2f921f852c8bb9fa212a"
-    __APYCURRENCICONVERSOR_EP = ""
+    __APYCURRENCICONVERSOR_EP = "https://free.currencyconverterapi.com/api/v6/convert?apiKey=2f921f852c8bb9fa212a&q={}_{}&compact=ultra"
     def __init__(self, parent, **args):
         ttk.Frame.__init__(self, parent, height=229, width=378)
         #Variables de Control
@@ -36,9 +36,17 @@ class Convertidor(ttk.Frame):
         _to = self.outCurrency.get()
         resultado = "0"
         if _amount != "" and _from != "" and _to != "":
-            resultado = float(_amount)* currencies[_from] / currencies[_to]
+            _to = _to[:3]
+            _from = _from[:3]
+            url =   self.__APYCURRENCICONVERSOR_EP.format(_from, _to)
             self.outQuantityLabel.config(text=str(resultado))
+            respond = requests.get(url)
 
+            if respond.status_code == 200:
+                value = json.loads(respond.text)
+                tasa = value["{}_{}".format(_from, _to)]
+                resultado = float(tasa) * float(_amount)
+                self.outQuantityLabel.config(text=str(resultado))
     def validateQuantity(self, *args):
         try:
             if self.__strinQuantity.get() != "":
