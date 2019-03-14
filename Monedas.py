@@ -13,30 +13,28 @@ class Convertidor(ttk.Frame):
         self.__strinQuantity.trace("w", self.validateQuantity)
         self.outQuantity = 0.0
         self.inCurrency = StringVar()
-        self.inCurrency.trace("w", self.Convertirdivisas)
         self.outCurrency = StringVar()
-        self.outCurrency.trace("w", self.Convertirdivisas)
         currencieskey=[]
         for keys in currencies:
             currencieskey.append(keys)
         self.inQuantityEntry = ttk.Entry(self, font= ("Helvetica", 18, "bold"), width=10, textvariable=self.__strinQuantity).place(x=38, y=23)
-        self.inCurrencyCombo = ttk.Combobox(self, width=10, height=5,values=currencieskey, textvariable=self.inCurrency).place(x=38, y=71)
+        self.inCurrencyCombo = ttk.Combobox(self, width=10, height=5,values=currencieskey, textvariable=self.inCurrency)
+        self.inCurrencyCombo.place(x=38, y=71)
+        self.inCurrencyCombo.bind("<<ComboboxSelected>>", self.Convertirdivisas)
         ttk.Label(self, text="⥮").place(x=102, y=98)
-        self.outCurrencyCombo = ttk.Combobox(self, width=10, height=5,values=currencieskey,textvariable=self.outCurrency).place(x=38, y=120)
-        self.outQuantityLabel = ttk.Label(self, text="0000000000",width=10, font=("Helvetica", 18, "bold")).place(x=38, y=166)
+        self.outCurrencyCombo = ttk.Combobox(self, width=10, height=5,values=currencieskey,textvariable=self.outCurrency)
+        self.outCurrencyCombo.place(x=38, y=120)
+        self.outCurrencyCombo.bind("<<ComboboxSelected>>", self.Convertirdivisas)
+        self.outQuantityLabel = ttk.Label(self, text="",width=10, font=("Helvetica", 18, "bold"))
+        self.outQuantityLabel.place(x=38, y=166)
 
-    def Convertirdivisas(self):
+    def Convertirdivisas(self, *args):
         _amount = (self.__strinQuantity.get())
         _from = self.inCurrency.get()
         _to = self.outCurrency.get()
         resultado = "0"
         if _amount != "" and _from != "" and _to != "":
-            if _to == "EUR":
-                resultado = float(_amount)* currencies[_from]
-            elif _from == "EUR":
-                resultado = float(_amount)* currencies[_to]
-            else:
-                resultado = float(_amount)* currencies[_from] / currencies[_to]
+            resultado = float(_amount)* currencies[_from] / currencies[_to]
             self.outQuantityLabel.config(text=str(resultado))
 
     def validateQuantity(self, *args):
